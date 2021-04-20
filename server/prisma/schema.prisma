@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  phone     Int?
+  address   String?
+  birthData DateTime  @default(now())
+  comment   String?
+  inn       Int?      @default(0)
+  kpp       Int?      @default(0)
+  card      String?
+  role      Int       @default(0)
+  password  String    @default("")
+  journals  Journal[]
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  type     String
+  unit     String
+  sale     Float
+  tax      Float
+  products Product[]
+}
+
+model Product {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  category       Category         @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  cost           Float
+  available      Float
+  description    String?
+  journalProduct JournalProduct[]
+  journalReturn  JournalReturn[]
+}
+
+model Journal {
+  id              Int              @id @default(autoincrement())
+  date            DateTime         @default(now())
+  sellerId        Int
+  seller          User             @relation(fields: [sellerId], references: [id])
+  withoutSale     Float            @default(0)
+  sale            Float            @default(0)
+  total           Float            @default(0)
+  paid            Float            @default(0)
+  journalProducts JournalProduct[]
+  journalPayments JournalPayment[]
+  journalReturn   JournalReturn[]
+}
+
+model JournalProduct {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Float
+  sale      Float   @default(0)
+  total     Float   @default(0)
+  journalId Int
+  journal   Journal @relation(fields: [journalId], references: [id])
+}
+
+model JournalPayment {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @default(now())
+  price         Float
+  paymentMethod String
+  comment       String
+  journalId     Int
+  journal       Journal  @relation(fields: [journalId], references: [id])
+}
+
+model JournalReturn {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  sold      Float
+  returned  Float
+  journalId Int
+  journal   Journal  @relation(fields: [journalId], references: [id])
+}
