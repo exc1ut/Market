@@ -24,11 +24,9 @@ export class JournalController {
   constructor(private readonly journalService: JournalService) {}
 
   // @Roles(Role.User)
-  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createJournalDto: CreateJournalDto, @Request() req) {
-    const userId = req.user.id;
-    return this.journalService.create(createJournalDto, userId);
+  create(@Body() createJournalDto: CreateJournalDto) {
+    return this.journalService.create(createJournalDto);
   }
 
   @Get()

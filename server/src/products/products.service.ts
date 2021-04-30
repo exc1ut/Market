@@ -14,8 +14,7 @@ export class ProductsService {
   }
 
   async findByNameAndCategory(name: string, categories: number[]) {
-
-    const products = this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       where: {
         name: {
           contains: name,
@@ -24,9 +23,19 @@ export class ProductsService {
           in: categories,
         },
       },
+      include: {
+        category: true,
+      },
     });
 
     return products;
+  }
+
+  async clone(id: number) {
+    const product = await this.prisma.product.findFirst({ where: { id } });
+    delete product.id;
+
+    await this.prisma.product.create({ data: product });
   }
 
   async findAll() {
@@ -37,6 +46,20 @@ export class ProductsService {
   async findOne(id: number) {
     const product = await this.prisma.product.findFirst({ where: { id } });
     return product;
+  }
+
+  async findInRange(ids: number[]) {
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        category: true,
+      },
+    });
+    return products;
   }
 
   async update(id: number, updateProductDto: Prisma.ProductUpdateInput) {

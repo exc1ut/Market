@@ -19,6 +19,7 @@ export class ProductsController {
     @Body()
     createProductDto: Prisma.ProductCreateInput & { categoryId: number },
   ) {
+    // createProductDto.categoryId = +createProductDto.categoryId
     return this.productsService.create(createProductDto);
   }
 
@@ -51,5 +52,15 @@ export class ProductsController {
       body.name,
       body.categoryId,
     );
+  }
+
+  @Post('clone')
+  clone(@Body() body: { id: number }) {
+    return this.productsService.clone(body.id);
+  }
+
+  @Post('getByRange')
+  getByRange(@Body() body: { ids: number[] }) {
+    return this.productsService.findInRange(body.ids);
   }
 }

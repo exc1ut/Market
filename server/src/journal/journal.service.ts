@@ -9,8 +9,8 @@ import { UpdateJournalDto } from './dto/update-journal.dto';
 export class JournalService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createJournalDto: CreateJournalDto, id: number) {
-    createJournalDto.products.forEach(async (value, index) => {
+  async create(createJournalDto: CreateJournalDto) {
+    createJournalDto.products.forEach(async (value) => {
       const product = await this.prisma.product.findFirst({
         where: { id: value.productId },
       });
@@ -28,7 +28,11 @@ export class JournalService {
 
     const journal = await this.prisma.journal.create({
       data: {
-        sellerId: id,
+        sellerId: createJournalDto.userId,
+        total: createJournalDto.total,
+        paid: createJournalDto.paid,
+        sale: createJournalDto.sale,
+        withoutSale: createJournalDto.withoutSale,
         journalProducts: {
           create: createJournalDto.products,
         },

@@ -32,14 +32,14 @@ model Category {
   name     String    @unique
   type     String
   unit     String
-  sale     Float
-  tax      Float
+  sale     Float?    @default(0)
+  tax      Float?    @default(0)
   products Product[]
 }
 
 model Product {
   id             Int              @id @default(autoincrement())
-  name           String           @unique
+  name           String
   category       Category         @relation(fields: [categoryId], references: [id])
   categoryId     Int
   cost           Float
@@ -54,13 +54,15 @@ model Journal {
   date            DateTime         @default(now())
   sellerId        Int
   seller          User             @relation(fields: [sellerId], references: [id])
-  withoutSale     Float            @default(0)
   sale            Float            @default(0)
-  total           Float            @default(0)
-  paid            Float            @default(0)
+  withoutSale     Float            @default(0)
+  total           Float
+  paid            Float
   journalProducts JournalProduct[]
   journalPayments JournalPayment[]
   journalReturn   JournalReturn[]
+  client          Client?          @relation(fields: [clientId], references: [id])
+  clientId        Int?
 }
 
 model JournalProduct {
@@ -79,7 +81,7 @@ model JournalPayment {
   date          DateTime @default(now())
   price         Float
   paymentMethod String
-  comment       String
+  comment       String?
   journalId     Int
   journal       Journal  @relation(fields: [journalId], references: [id])
 }
@@ -93,4 +95,22 @@ model JournalReturn {
   returned  Float
   journalId Int
   journal   Journal  @relation(fields: [journalId], references: [id])
+}
+
+model Client {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  number    Int
+  email     String
+  birthDate DateTime  @default(now())
+  dept      Float     @default(0)
+  address   String?
+  comment   String?
+  inn       Int?
+  kpp       Int?
+  schet     Int?
+  bik       String?
+  bank      String?
+  entSchet  Int?
+  journal   Journal[]
 }
