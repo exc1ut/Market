@@ -3,7 +3,7 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { access } from 'fs';
+import { access, stat } from 'fs';
 import _, { values } from 'lodash';
 import {
   JournalPayment,
@@ -67,7 +67,13 @@ const cartSlice = createSlice({
       state.sale = payload.sale;
     },
     addProduct: (state, { payload }: PayloadAction<CartProduct>) => {
-      state.journalProducts.create.push(payload);
+      const index = state.journalProducts.create.findIndex(
+        (val) => val.productId === payload.productId
+      );
+      if (index < 0) {
+        state.journalProducts.create.push(payload);
+      } else state.journalProducts.create[index] = payload;
+
       let sum = 0;
       state.journalProducts.create.forEach((val) => {
         sum += val.total;
@@ -95,6 +101,10 @@ const cartSlice = createSlice({
     },
     removeClient: (state) => {
       state.client = undefined;
+    },
+    resetCart: (state) => (state = initialState),
+    resetPayments: (state) => {
+      state.journalPayments.create = [];
     },
   },
 });
@@ -128,4 +138,6 @@ export const {
   setSeller,
   addClient,
   removeClient,
+  resetCart,
+  resetPayments,
 } = cartSlice.actions;

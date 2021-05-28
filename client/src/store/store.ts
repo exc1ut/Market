@@ -1,9 +1,10 @@
 import userSlice from './slices/user.slice';
 import cartSlice from './slices/cart.slice';
+import productSlice from './slices/product.slice';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-const rootReducer = combineReducers({ userSlice, cartSlice });
+const rootReducer = combineReducers({ userSlice, cartSlice, productSlice });
 
 const store = configureStore({
   reducer: rootReducer,

@@ -1,11 +1,13 @@
 import { Button } from '@chakra-ui/button';
 import { Box, Text, VStack } from '@chakra-ui/layout';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import React, { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { useForm } from 'react-hook-form';
 import { useClientCreate } from '../../../api/useClient';
 import { FormInput } from '../../../components/Form/FormInput';
 import { FormNumberInput } from '../../../components/Form/FormNumberInput';
+import { ClientSchema } from './client.schema';
 
 interface AddClientProps {}
 
@@ -18,14 +20,15 @@ type ClientType = {
 };
 
 export const AddClient: React.FC<AddClientProps> = ({}) => {
-  const { register, setValue, handleSubmit } = useForm<ClientType>({
+  const { register, setValue, handleSubmit } = useForm<ClientSchema>({
     defaultValues: {
       name: '',
       email: '',
-      number: 0,
+      number: '',
       birthDate: new Date(),
       dept: 0,
     },
+    resolver: classValidatorResolver(ClientSchema),
   });
 
   const client = useClientCreate();

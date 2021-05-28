@@ -7,14 +7,18 @@
       "request": "launch",
       "protocol": "inspector",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:main --inspect=5858 --remote-debugging-port=9223"],
+      "runtimeArgs": [
+        "start:main",
+        "--inspect=5858",
+        "--remote-debugging-port=9223"
+      ],
       "preLaunchTask": "Start Webpack Dev"
     },
     {
       "name": "Electron: Renderer",
       "type": "chrome",
       "request": "attach",
-      "port": 9224,
+      "port": 9223,
       "webRoot": "${workspaceFolder}",
       "timeout": 15000
     }

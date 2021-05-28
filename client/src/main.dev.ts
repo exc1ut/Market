@@ -24,7 +24,7 @@ declare const global: any;
 let address;
 
 const options = {
-  target: '192.168.1.0-192.168.1.255',
+  target: '172.20.10.0-172.20.10.255',
   port: '5000',
   status: 'TROU', // Timeout, Refused, Open, Unreachable
   banner: true,
@@ -40,7 +40,7 @@ const getServerAddress = () =>
 
       scan.on('result', (data: any) => {
         // fired when item is matching options
-        // console.log('response', data);
+        console.log('response', data);
         if (data.status == 'open') res(data);
       });
 
@@ -81,7 +81,7 @@ if (
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   return installer
     .default(

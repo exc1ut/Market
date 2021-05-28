@@ -3,9 +3,11 @@ import { Route, Switch } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Category } from './pages/category';
 import { Checkout } from './pages/checkout';
+import { Journal } from './pages/journal';
 import { Login } from './pages/login/Login';
 import { Main } from './pages/main';
 import { Product } from './pages/product';
+import { Settings } from './pages/settings';
 import { useAppSelector } from './store/store';
 
 interface RouteProps {}
@@ -30,6 +32,12 @@ export const AppRoute: React.FC<RouteProps> = ({}) => {
           </Route>
           <Route path="/checkout">
             <Checkout />
+          </Route>
+          <Route path="/journal">
+            <Journal />
+          </Route>
+          <Route path="/settings">
+            <Settings />
           </Route>
         </>
       ) : (

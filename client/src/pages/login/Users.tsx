@@ -17,7 +17,7 @@ export const Users: React.FC<UsersProps> = ({}) => {
         <Text fontSize="xl">Выберите сотрудника</Text>
       </Center>
       {users?.map((user) => (
-        <List id={user.id} name={user.name} role={user.role} />
+        <List key={user.id} id={user.id} name={user.name} role={user.role} />
       ))}
     </Box>
   );

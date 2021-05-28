@@ -86,7 +86,7 @@ export const Main: React.FC<MainProps> = ({}) => {
         <CartTable />
       </Box>
       <Flex justifyContent="space-between">
-        <HStack alignItems="flex-start" spacing={10}>
+        <HStack w="100%" alignItems="flex-start" spacing={10}>
           <Text fontWeight="medium" fontSize="2xl">
             Сумма: {total}
           </Text>
@@ -111,7 +111,7 @@ export const Main: React.FC<MainProps> = ({}) => {
             )}
           </Box>
 
-          <Flex flexDirection="column" alignItems="flex-end">
+          <Flex flexGrow={1} flexDirection="column" alignItems="flex-end">
             <Button
               onClick={() => handleCheckout()}
               colorScheme="blue"

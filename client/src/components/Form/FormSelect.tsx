@@ -8,7 +8,7 @@ type Option = {
 };
 
 interface FormInputProps {
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<any>;
   name: string;
   defaultValue?: string;
   options: Option[];

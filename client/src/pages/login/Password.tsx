@@ -37,6 +37,7 @@ export const Password: React.FC<PasswordProps> = ({}) => {
       <Input
         onChange={(e) => setPassword(e.target.value)}
         variant="filled"
+        type="password"
         placeholder="Пароль"
       />
       <Flex justifyContent="space-between">

@@ -16,7 +16,7 @@ import { useProductUpdate } from '../../api/useProduct';
 import { FormInput } from '../../components/Form/FormInput';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { FormSelect } from '../../components/Form/FormSelect';
-import { FormTextarea } from '../../components/Form/FormTextArea';
+import { TArea } from '../../components/Form/TAreaInput';
 import { Category, Product } from '../../interfaces/prisma';
 
 interface UpdateProductProps {
@@ -93,7 +93,7 @@ export const UpdateProduct: React.FC<UpdateProductProps> = ({
                 title="Остатки в наличии"
                 setValue={setValue}
               />
-              <FormTextarea
+              <TArea
                 name="description"
                 defaultValue={productInfo?.description || ''}
                 register={register}

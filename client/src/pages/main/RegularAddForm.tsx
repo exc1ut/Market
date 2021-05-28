@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { IFormProps } from '../../interfaces/IFormProps';
 import { roundNumber } from '../../utils/app';
+import { FormValuesContext } from './CartAdd';
+import { FormInput } from '../../components/Form/FormInput';
 
 export const RegularAddForm: React.FC<IFormProps> = ({
   register,
@@ -11,26 +13,35 @@ export const RegularAddForm: React.FC<IFormProps> = ({
   watch,
   setTotal,
 }) => {
+  const getValues = useContext(FormValuesContext);
+
   const watchCost = watch('cost') || product.data?.cost;
   const watchQuantity = watch('quantity') || 1;
+  const watchSale = watch('sale');
 
   useEffect(() => {
-    setTotal(watchCost * watchQuantity);
-  }, [watchCost, watchQuantity]);
+    setTotal(watchCost * watchQuantity - watchSale);
+  }, [watchCost, watchQuantity, watchSale]);
 
   return (
     <>
       <FormNumberInput
         title="Количество"
         name="quantity"
-        defaultValue={1}
+        defaultValue={getValues('quantity')}
         register={register as any}
         setValue={setValue as any}
       />
-      <FormNumberInput
+      <FormInput
         title="Цена"
         name="cost"
-        defaultValue={product.data?.cost}
+        defaultValue={getValues('cost')}
+        register={register as any}
+      />
+      <FormNumberInput
+        title="Скидка"
+        name="sale"
+        defaultValue={getValues('sale')}
         register={register as any}
         setValue={setValue as any}
       />
@@ -38,7 +49,10 @@ export const RegularAddForm: React.FC<IFormProps> = ({
         <Text fontSize="md" fontWeight="medium">
           Сумма:
         </Text>
-        <Text ml={5}> {roundNumber(watchQuantity * watchCost)}</Text>
+        <Text ml={5}>
+          {' '}
+          {roundNumber(watchQuantity * watchCost - parseFloat(watchSale))}
+        </Text>
       </Flex>
       <Button colorScheme="blue">Добавить</Button>
     </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Flex,
   Button,
@@ -10,9 +10,9 @@ import {
 } from '@chakra-ui/react';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { IFormProps } from '../../interfaces/IFormProps';
-import { FormInput } from '../../components/Form/FormInput';
-import { values } from 'lodash';
 import { roundNumber } from '../../utils/app';
+import { FormValuesContext } from './CartAdd';
+import { FormInput } from '../../components/Form/FormInput';
 
 export const RulonAddForm: React.FC<IFormProps> = ({
   register,
@@ -21,11 +21,13 @@ export const RulonAddForm: React.FC<IFormProps> = ({
   watch,
   setTotal,
 }) => {
+  const getValues = useContext(FormValuesContext);
   const [type, setType] = useState('1');
   const constant = type === '1' ? 1.15 : 1.25;
   const watchLength = watch('length') || 1;
   const watchNumber = watch('number') || 1;
   const watchCost = watch('cost') || product.data?.cost;
+  const watchSale = watch('sale');
 
   const area = useMemo(() => watchLength * watchNumber * constant, [
     type,
@@ -34,8 +36,8 @@ export const RulonAddForm: React.FC<IFormProps> = ({
   ]);
 
   useEffect(() => {
-    setTotal(area * watchCost);
-  }, [area, watchCost]);
+    setTotal(area * watchCost - watchSale);
+  }, [area, watchCost, watchSale]);
 
   return (
     <>
@@ -49,14 +51,14 @@ export const RulonAddForm: React.FC<IFormProps> = ({
         <FormNumberInput
           title="Количество"
           name="length"
-          defaultValue={1}
+          defaultValue={getValues('length')}
           register={register as any}
           setValue={setValue as any}
         />
         <FormNumberInput
           title="Штук"
           name="number"
-          defaultValue={1}
+          defaultValue={getValues('number')}
           register={register as any}
           setValue={setValue as any}
         />
@@ -67,10 +69,16 @@ export const RulonAddForm: React.FC<IFormProps> = ({
         </Text>
         <Text ml={5}> {roundNumber(area)}</Text>
       </Flex>
-      <FormNumberInput
+      <FormInput
         title="Цена"
         name="cost"
-        defaultValue={product.data?.cost}
+        defaultValue={getValues('cost')}
+        register={register as any}
+      />
+      <FormNumberInput
+        title="Скидка"
+        name="sale"
+        defaultValue={getValues('sale')}
         register={register as any}
         setValue={setValue as any}
       />
@@ -78,7 +86,10 @@ export const RulonAddForm: React.FC<IFormProps> = ({
         <Text fontSize="md" fontWeight="medium">
           Сумма:
         </Text>
-        <Text ml={5}> {roundNumber(area * watchCost)}</Text>
+        <Text ml={5}>
+          {' '}
+          {roundNumber(area * watchCost - parseFloat(watchSale))}
+        </Text>
       </Flex>
       <Button type="submit" colorScheme="blue">
         Добавить

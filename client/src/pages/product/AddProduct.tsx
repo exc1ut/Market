@@ -9,15 +9,19 @@ import {
   Button,
   VStack,
 } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCategories } from '../../api/useCategories';
 import { useProductAdd } from '../../api/useProduct';
+import { FormError } from '../../components/Form/Error';
 import { FormInput } from '../../components/Form/FormInput';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { FormSelect } from '../../components/Form/FormSelect';
-import { FormTextarea } from '../../components/Form/FormTextArea';
+import { TArea } from '../../components/Form/TAreaInput';
 import { Category } from '../../interfaces/prisma';
+import { checkEmptyObject } from '../../utils/app';
+import { ProductSchema } from './product.schema';
 
 interface AddCategoryProps {
   isOpen: boolean;
@@ -25,9 +29,18 @@ interface AddCategoryProps {
 }
 
 export const AddProduct: React.FC<AddCategoryProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, setValue, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<ProductSchema>({
+    resolver: classValidatorResolver(ProductSchema),
+  });
   const product = useProductAdd();
   const categories = useCategories();
+  console.log(errors);
 
   const options = categories.data?.map((category: Category) => ({
     value: category.id,
@@ -55,6 +68,7 @@ export const AddProduct: React.FC<AddCategoryProps> = ({ isOpen, onClose }) => {
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={3}>
+              {!checkEmptyObject(errors) && <FormError title="Ошибка" />}
               <FormInput name="name" register={register} title="Наименование" />
               <FormSelect
                 name="categoryId"
@@ -74,11 +88,7 @@ export const AddProduct: React.FC<AddCategoryProps> = ({ isOpen, onClose }) => {
                 title="Остатки в наличии"
                 setValue={setValue}
               />
-              <FormTextarea
-                name="description"
-                register={register}
-                title="Описание"
-              />
+              <TArea name="description" register={register} title="Описание" />
             </VStack>
           </ModalBody>
 

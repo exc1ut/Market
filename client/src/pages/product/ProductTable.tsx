@@ -94,6 +94,19 @@ export const ProductTable: React.FC<ProductTableProps> = ({
     productDelete.mutate(id);
   };
 
+  const totalInfo = React.useMemo(() => {
+    const names = data.reduce((acc) => acc + 1, 0);
+    const totalQuantity = data.reduce((acc, val) => acc + val.available, 0);
+    const totalCost = data.reduce((acc, val) => acc + val.cost, 0);
+    return {
+      names,
+      totalCost,
+      totalQuantity,
+    };
+  }, [data]);
+
+  const caption = `Наименований: ${totalInfo.names} | Кол-во: ${totalInfo.totalQuantity} | На сумму: ${totalInfo.totalCost}`;
+
   const handleClone = (id: number) => {
     productClone.mutate(id);
   };
@@ -111,6 +124,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
       handleAddCard={handleAddCart}
       columns={columns}
       data={data}
+      caption={caption}
     />
   );
 };

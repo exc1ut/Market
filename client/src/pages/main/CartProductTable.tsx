@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IProductWithCategory } from '../../interfaces/IProductWithCategory';
 import { Table } from '../../components/Table';
 import { useProductClone, useProductDelete } from '../../api/useProduct';
@@ -6,7 +6,12 @@ import { useAppDispatch } from '../../store/store';
 import { addProduct, CartProduct } from '../../store/slices/cart.slice';
 import { useProducts } from '../../api/useProducts';
 import { IconButton } from '@chakra-ui/button';
-import { CopyIcon } from '@chakra-ui/icons';
+import { CopyIcon, EditIcon, Icon } from '@chakra-ui/icons';
+import { Modal } from '../../components/Modal';
+import { ProductList } from './ProductList';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { CartAdd } from './CartAdd';
+import { IoAddOutline } from 'react-icons/io5';
 
 interface ProductTableProps {
   products: IProductWithCategory[];
@@ -47,7 +52,7 @@ export const CartProductTable: React.FC<ProductTableProps> = ({
           aria-label="clone"
           size="xs"
           onClick={() => handleAdd(value)}
-          icon={<CopyIcon />}
+          icon={<Icon as={IoAddOutline} fontSize="md" />}
         />
       ),
     },

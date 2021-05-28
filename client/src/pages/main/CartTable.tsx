@@ -1,21 +1,31 @@
 import { IconButton } from '@chakra-ui/button';
-import { DeleteIcon } from '@chakra-ui/icons';
-import React from 'react';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { useDisclosure } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { useProductsByRange } from '../../api/useProducts';
+import { Modal } from '../../components/Modal';
 import { Table } from '../../components/Table';
 import { getIds, removeProduct } from '../../store/slices/cart.slice';
 import { useAppDispatch, useAppSelector } from '../../store/store';
+import { CartAdd } from './CartAdd';
 
 interface CartTableProps {}
 
 export const CartTable: React.FC<CartTableProps> = ({}) => {
   const ids = useAppSelector(getIds);
+  const [selectedId, setSelectedId] = useState(0);
+  const modal = useDisclosure();
   const cartProducts = useAppSelector(
     (state) => state.cartSlice.journalProducts.create
   );
   const products = useProductsByRange(ids);
 
   const dispatch = useAppDispatch();
+
+  const handleEdit = (id: number) => {
+    setSelectedId(id);
+    modal.onOpen();
+  };
 
   const preparedData = cartProducts.map((val, index) => {
     const fetchedProducts = products.data?.find((v) => v.id === val.productId);
@@ -56,6 +66,19 @@ export const CartTable: React.FC<CartTableProps> = ({}) => {
         />
       ),
     },
+    {
+      id: 'edit',
+      accessor: 'productId',
+      Cell: ({ value }: any) => (
+        <IconButton
+          variant="ghost"
+          aria-label="edit"
+          size="xs"
+          onClick={() => handleEdit(value)}
+          icon={<EditIcon />}
+        />
+      ),
+    },
   ];
 
   const handleDelete = (id: number) => {
@@ -65,5 +88,17 @@ export const CartTable: React.FC<CartTableProps> = ({}) => {
 
   const data = React.useMemo(() => preparedData, [preparedData]);
 
-  return <Table columns={columns} data={data} />;
+  return (
+    <>
+      <Modal
+        title="add"
+        size="sm"
+        onClose={modal.onClose}
+        isOpen={modal.isOpen}
+      >
+        <CartAdd id={selectedId} />
+      </Modal>
+      <Table columns={columns} data={data} />
+    </>
+  );
 };

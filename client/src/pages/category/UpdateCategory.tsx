@@ -18,7 +18,11 @@ import {
   NumberInputStepper,
   Checkbox,
   VStack,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCategoryUpdate } from '../../api/useCategory';
@@ -26,6 +30,8 @@ import { FormInput } from '../../components/Form/FormInput';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { FormSelect } from '../../components/Form/FormSelect';
 import { Category } from '../../interfaces/prisma';
+import { checkEmptyObject } from '../../utils/app';
+import { CategorySchema } from './form.schema';
 
 interface AddCategoryProps {
   isOpen: boolean;
@@ -38,7 +44,15 @@ export const UpdateCategory: React.FC<AddCategoryProps> = ({
   onClose,
   categoryInfo,
 }) => {
-  const { register, handleSubmit, setValue, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<CategorySchema>({
+    resolver: classValidatorResolver(CategorySchema),
+  });
   const [isChecked, setIsChecked] = useState(false);
   const category = useCategoryUpdate();
 
@@ -62,6 +76,12 @@ export const UpdateCategory: React.FC<AddCategoryProps> = ({
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={3}>
+              {!checkEmptyObject(errors) && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Ошибка</AlertTitle>
+                </Alert>
+              )}
               <FormInput
                 name="name"
                 register={register}
@@ -85,8 +105,12 @@ export const UpdateCategory: React.FC<AddCategoryProps> = ({
                 name="sale"
                 register={register}
                 title="Максимальная скидка"
+                formNumberInput={{
+                  max: 100,
+                  min: 0,
+                }}
                 setValue={setValue}
-                defaultValue={categoryInfo?.sale}
+                defaultValue={categoryInfo?.sale!}
               />
               <FormControl>
                 <FormLabel>
@@ -102,7 +126,7 @@ export const UpdateCategory: React.FC<AddCategoryProps> = ({
                   <NumberInput
                     {...register('tax')}
                     onChange={(e) => setValue('tax', +e)}
-                    defaultValue={categoryInfo?.tax}
+                    defaultValue={categoryInfo?.tax!}
                     name="tax"
                     min={0}
                     max={100}

@@ -19,13 +19,21 @@ import {
   Checkbox,
   useToast,
   VStack,
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  CloseButton,
 } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCategoryAdd } from '../../api/useCategory';
 import { FormInput } from '../../components/Form/FormInput';
 import { FormNumberInput } from '../../components/Form/FormNumberInput';
 import { FormSelect } from '../../components/Form/FormSelect';
+import { checkEmptyObject } from '../../utils/app';
+import { CategorySchema } from './form.schema';
 
 interface AddCategoryProps {
   isOpen: boolean;
@@ -36,11 +44,23 @@ export const AddCategory: React.FC<AddCategoryProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { register, handleSubmit, setValue, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+    getValues,
+  } = useForm<CategorySchema>({
+    resolver: classValidatorResolver(CategorySchema),
+  });
   const [isChecked, setIsChecked] = useState(false);
   const category = useCategoryAdd();
 
   const toast = useToast();
+
+  console.log(getValues('type'));
+  console.log(errors);
 
   const onSubmit = (data: any) => {
     category.mutate(data);
@@ -62,6 +82,13 @@ export const AddCategory: React.FC<AddCategoryProps> = ({
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={3}>
+              {!checkEmptyObject(errors) && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Ошибка</AlertTitle>
+                </Alert>
+              )}
+
               <FormInput
                 name="name"
                 register={register}
@@ -78,12 +105,14 @@ export const AddCategory: React.FC<AddCategoryProps> = ({
                 register={register}
                 title="Единица измерения"
               />
-              <FormNumberInput
-                name="sale"
-                register={register}
-                title="Максимальная скидка"
-                setValue={setValue}
-              />
+              <FormControl>
+                <FormLabel>Скидка</FormLabel>
+                <Input
+                  {...register('sale', {
+                    valueAsNumber: true,
+                  })}
+                />
+              </FormControl>
               <FormControl>
                 <FormLabel>
                   <Checkbox

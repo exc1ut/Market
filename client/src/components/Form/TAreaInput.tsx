@@ -3,13 +3,13 @@ import React from 'react';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface FormInputProps {
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<any>;
   name: string;
   defaultValue?: string;
   title: string;
 }
 
-export const FormTextarea: React.FC<FormInputProps> = ({
+export const TArea: React.FC<FormInputProps> = ({
   register,
   name,
   defaultValue,
